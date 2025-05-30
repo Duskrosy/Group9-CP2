@@ -2,16 +2,12 @@
 
 GUI-Trial and better file-handling for the MotorPH App
 
-##  *How to Run*
+###  *How to Run*
 
 1. Make sure you have **Java 17+** and **Maven** installed.
+**Here's the link to [download Java]([url](https://www.oracle.com/ph/java/technologies/downloads/))**
+**Here's how to [install Maven]([url](https://phoenixnap.com/kb/install-maven-windows))**
 
-```Here's the link to download Java
-https://www.oracle.com/ph/java/technologies/downloads/
-```
-```Here's how to install Maven:
-https://phoenixnap.com/kb/install-maven-windows
-```
 3. Clone the project or download the ZIP.
 4. From the root directory, run:
 
@@ -20,13 +16,13 @@ https://phoenixnap.com/kb/install-maven-windows
 mvn clean compile exec:java
 ```
 
-## **Use credentials from login.txt to log in**
+### **Use credentials from login.txt to log in**
 
 Example Admin - **EID: 10000 PW: admin1234**
 
 Example User - **EID: 10001 PW: password123**
 
-## 🧾 Features
+# 🧾 Features
 
 - **Login System**  
   - Secure login using `employeeID` and password  
@@ -53,7 +49,7 @@ Example User - **EID: 10001 PW: password123**
 - Gavril (Pogi)
 - DAYANG GWAPA
 
-## Built With
+# Built With
 Java (JDK 17)
 Maven
 Swing (javax.swing)
