@@ -2,7 +2,7 @@
 
 GUI-Trial and better file-handling for the MotorPH App
 
-###*How to Run*
+###How to Run
 
 1. Make sure you have **Java 17+** and **Maven** installed.
 - Here's the link to [download Java](https://www.oracle.com/ph/java/technologies/downloads/)
