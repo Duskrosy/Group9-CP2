@@ -1,63 +1,175 @@
 package com.motorph;
 
-/**
- * @author Gavril pogi
- * based on my CP1 code
- */
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
+import javax.swing.event.*;
+import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
+import java.util.Vector;
 
 public class AllEmployeesPanel extends JPanel {
+    private DefaultTableModel model;
+    private JTable table;
+    private JEditorPane detailPane;
+    private JTextField searchField;
+
+    private final String[] fullColumns = {
+        "Employee #", "Last Name", "First Name", "Birthday", "Address", "Phone Number",
+        "SSS #", "Philhealth #", "TIN #", "Pag-ibig #", "Status", "Position",
+        "Immediate Supervisor", "Basic Salary", "Rice Subsidy", "Phone Allowance",
+        "Clothing Allowance", "Gross Semi-monthly Rate", "Hourly Rate"
+    };
+
     public AllEmployeesPanel() {
         setLayout(new BorderLayout());
 
-        String[] columns = {"Employee #", "Last Name", "First Name", "Birthday", "Address", "Phone Number",
-                            "SSS #", "Philhealth #", "TIN #", "Pag-ibig #", "Status", "Position",
-                            "Immediate Supervisor", "Basic Salary", "Rice Subsidy", "Phone Allowance",
-                            "Clothing Allowance", "Gross Semi-monthly Rate", "Hourly Rate"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0);
+        model = new DefaultTableModel(new Object[]{"Employee #", "Name", "Status"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
+        table = new JTable(model) {
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component comp = super.prepareRenderer(renderer, row, column);
+                if (!isRowSelected(row)) {
+                    comp.setBackground(row % 2 == 0 ? new Color(245, 245, 245) : Color.WHITE);
+                } else {
+                    comp.setBackground(new Color(184, 207, 229));
+                }
+                return comp;
+            }
+        };
+
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setRowHeight(25);
+        table.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getColumnModel().getColumn(0).setPreferredWidth(100);
+        table.getColumnModel().getColumn(1).setPreferredWidth(200);
+        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+
+        loadEmployeeData();
+
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow >= 0) {
+                    String[] fullData = getFullRowData(selectedRow);
+                    showEmployeeDetails(fullData);
+                }
+            }
+        });
+
+        detailPane = new JEditorPane();
+        detailPane.setContentType("text/html");
+        detailPane.setEditable(false);
+        detailPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        detailPane.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        JPanel topPanel = new JPanel(new BorderLayout());
+        searchField = new JTextField();
+        topPanel.add(new JLabel("Search: "), BorderLayout.WEST);
+        topPanel.add(searchField, BorderLayout.CENTER);
+
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { filter(); }
+            public void removeUpdate(DocumentEvent e) { filter(); }
+            public void changedUpdate(DocumentEvent e) { filter(); }
+        });
+
+        JButton addBtn = new JButton("Add");
+        JButton editBtn = new JButton("Edit");
+        JButton deleteBtn = new JButton("Delete");
+
+        addBtn.addActionListener(e -> openEmployeeDialog(null));
+        editBtn.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                openEmployeeDialog(getFullRowData(selectedRow));
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a row to edit.");
+            }
+        });
+
+        deleteBtn.addActionListener(e -> deleteSelectedRow());
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(addBtn);
+        buttonPanel.add(editBtn);
+        buttonPanel.add(deleteBtn);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(table), new JScrollPane(detailPane));
+        splitPane.setResizeWeight(0.0); // keep table fixed
+        splitPane.setDividerLocation(440); // set initial divider width
+        splitPane.setDividerSize(6); // optional thinner divider
+
+        add(topPanel, BorderLayout.NORTH);
+        add(splitPane, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private void loadEmployeeData() {
+        model.setRowCount(0);
         try (BufferedReader br = new BufferedReader(new FileReader("employee_data.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] data = line.split("\t");
-                if (data.length == columns.length) {
-                    // Format salary-related columns with ₱ symbol (assumes they're valid numbers otherwise wont work)
-					// Allows for margin with use of commas
-try {
-    data[13] = "₱" + String.format("%,.2f", Double.parseDouble(data[13].replace(",", ""))); // Basic Salary
-    data[14] = "₱" + String.format("%,.2f", Double.parseDouble(data[14].replace(",", ""))); // Rice Subsidy
-    data[15] = "₱" + String.format("%,.2f", Double.parseDouble(data[15].replace(",", ""))); // Phone Allowance
-    data[16] = "₱" + String.format("%,.2f", Double.parseDouble(data[16].replace(",", ""))); // Clothing Allowance
-    data[17] = "₱" + String.format("%,.2f", Double.parseDouble(data[17].replace(",", ""))); // Gross Semi-monthly Rate
-    data[18] = "₱" + String.format("%,.2f", Double.parseDouble(data[18].replace(",", ""))); // Hourly Rate
-} catch (NumberFormatException e) {
-    System.err.println("Error formatting currency fields: " + e.getMessage());
-}
-model.addRow(data);
+                String[] fullRow = line.split("\t");
+                if (fullRow.length >= 11) {
+                    String empId = fullRow[0];
+                    String name = fullRow[2] + " " + fullRow[1];
+                    String status = fullRow[10];
+                    model.addRow(new Object[]{empId, name, status});
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        JTable table = new JTable(model);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // ok na yung resize neto pls...
+    private void filter() {
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + searchField.getText()));
+        table.setRowSorter(sorter);
+    }
 
-        // Ok na to wag na-iadjust pero ikaw bahala ka wag mo lang i-commit
-        TableColumnModel columnModel = table.getColumnModel();
-        for (int column = 0; column < columnModel.getColumnCount(); column++) {
-            columnModel.getColumn(column).setPreferredWidth(150);
+    private String[] getFullRowData(int selectedRow) {
+        String empId = (String) table.getValueAt(selectedRow, 0);
+        try (BufferedReader br = new BufferedReader(new FileReader("employee_data.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] fullRow = line.split("\t");
+                if (fullRow[0].equals(empId)) {
+                    return fullRow;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return new String[fullColumns.length];
+    }
 
-        // Wrap table
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(1200, 400)); // Adjust here
+    private void showEmployeeDetails(String[] data) {
+        StringBuilder html = new StringBuilder("<html><body style='font-family:sans-serif; padding:10px;'>");
+        html.append("<h2 style='margin-top:0;'>(◕‿◕) Employee Profile</h2><table cellpadding='4'>");
+        for (int i = 0; i < fullColumns.length && i < data.length; i++) {
+            html.append("<tr>")
+                .append("<td style='font-weight:bold; color:#333;'>").append(fullColumns[i]).append("</td>")
+                .append("<td>").append(data[i]).append("</td>")
+                .append("</tr>");
+        }
+        html.append("</table></body></html>");
+        detailPane.setText(html.toString());
+        detailPane.setCaretPosition(0);
+    }
 
-        add(scrollPane, BorderLayout.CENTER);
+    private void openEmployeeDialog(String[] data) {
+        // Fill this with your existing add/edit dialog logic
+    }
+
+    private void deleteSelectedRow() {
+        // Fill this with your existing delete logic
     }
 }
