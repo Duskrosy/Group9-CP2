@@ -2,7 +2,7 @@
 
 GUI-Trial and better file-handling for the MotorPH App
 
-###  *How to Run*
+### *How to Run*
 
 1. Make sure you have **Java 17+** and **Maven** installed.
 - Here's the link to [download Java](https://www.oracle.com/ph/java/technologies/downloads/)
@@ -16,7 +16,7 @@ GUI-Trial and better file-handling for the MotorPH App
 mvn clean compile exec:java
 ```
 
-### **Use credentials from login.txt to log in**
+### **Use credentials from __login.txt__ to log in**
 
 Example Admin - **EID: 10000 PW: admin1234**
 
