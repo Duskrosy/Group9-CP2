@@ -5,8 +5,8 @@ GUI-Trial and better file-handling for the MotorPH App
 ###  *How to Run*
 
 1. Make sure you have **Java 17+** and **Maven** installed.
-- Here's the link to [download Java]([url](https://www.oracle.com/ph/java/technologies/downloads/)
-- Here's how to [install Maven]([url](https://phoenixnap.com/kb/install-maven-windows)
+- Here's the link to [download Java][url](https://www.oracle.com/ph/java/technologies/downloads/)
+- Here's how to [install Maven][url](https://phoenixnap.com/kb/install-maven-windows)
 
 3. Clone the project or download the ZIP.
 4. From the root directory, run:
