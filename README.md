@@ -20,7 +20,7 @@ https://phoenixnap.com/kb/install-maven-windows
 mvn clean compile exec:java
 ```
 
-##**Use credentials from login.txt to log in**
+## **Use credentials from login.txt to log in**
 
 Example Admin - **EID: 10000 PW: admin1234**
 
