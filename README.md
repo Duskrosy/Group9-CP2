@@ -40,7 +40,7 @@ Example User - **EID: 10001 PW: password123**
   - Logout tab styled in red and placed at the far-right  
   - Tables dynamically render data from files with formatting (e.g., ₱ currency sign)
 
-##What I'm proud of honestly:
+## What I'm proud of honestly:
 - Cutoff periods are automatically determined by date (15 and 30 of each month).
 - Payroll entries are automatically captured using the Time Tracker.
 - You can toggle 12-hour and 24-hour formats in the Time Tracker.
