@@ -2,6 +2,25 @@
 
 GUI-Trial and better file-handling for the MotorPH App
 
+##  *How to Run*
+
+1. Make sure you have **Java 17+** and **Maven** installed.
+2. Clone the project or download the ZIP.
+3. From the root directory, run:
+
+Pag wala parin gayahin mo to:
+https://phoenixnap.com/kb/install-maven-windows
+
+```bash
+mvn clean compile exec:java
+```
+
+##**Use credentials from login.txt to log in**
+
+Example Admin - **EID: 10000 PW: admin1234**
+
+Example User - **EID: 10001 PW: password123**
+
 ## 🧾 Features
 
 - **Login System**  
@@ -20,34 +39,16 @@ GUI-Trial and better file-handling for the MotorPH App
   - Logout tab styled in red and placed at the far-right  
   - Tables dynamically render data from files with formatting (e.g., ₱ currency sign)
 
-##  *How to Run*
-
-1. Make sure you have **Java 17+** and **Maven** installed.
-2. Clone the project or download the ZIP.
-3. From the root directory, run:
-
-Pag wala parin gayahin mo to:
-https://phoenixnap.com/kb/install-maven-windows
-
-```bash
-mvn clean compile exec:java
-```
-
-**Use credentials from login.txt to log in**
-
-Example Admin - **EID: 10000 PW: admin1234**
-
-Example User - **EID: 10001 PW: password123**
-
-What I'm proud of honestly:
+##**What I'm proud of honestly:**
 - Cutoff periods are automatically determined by date (15 and 30 of each month).
 - Payroll entries are automatically captured using the Time Tracker.
 - You can toggle 12-hour and 24-hour formats in the Time Tracker.
 
-Group Members:
-Gavril (Pogi)	Lead Developer / UI / Integration
+## Group Members:
+- Gavril (Pogi)
+- DAYANG GWAPA
 
-Built With
+## Built With
 Java (JDK 17)
 Maven
 Swing (javax.swing)
