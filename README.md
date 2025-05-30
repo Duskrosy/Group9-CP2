@@ -20,11 +20,14 @@ GUI-Trial and better file-handling for the MotorPH App
   - Logout tab styled in red and placed at the far-right  
   - Tables dynamically render data from files with formatting (e.g., ₱ currency sign)
 
-##  *How to Run
+##  *How to Run*
 
 1. Make sure you have **Java 17+** and **Maven** installed.
 2. Clone the project or download the ZIP.
 3. From the root directory, run:
+
+Pag wala parin gayahin mo to:
+https://phoenixnap.com/kb/install-maven-windows
 
 ```bash
 mvn clean compile exec:java
