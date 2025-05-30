@@ -33,7 +33,7 @@ Example User - **EID: 10001 PW: password123**
 - guys add niyo na names niyo plz
 
 # Built With
-Java (JDK 17)
-Maven
-Swing (javax.swing)
+- Java (JDK 17)
+- Maven
+- Swing (javax.swing)
 
