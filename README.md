@@ -38,8 +38,8 @@ Example User - **EID: 10001 PW: password123**
   - TIN
   - Pag-IBIG Number
 - [x] Allow user to select an employee from the table and click **View Employee** to open a detailed frame.
-- [x] Prompt the user to select a month for salary computation in the detail frame.
-- [x] After clicking **Compute**, display employee details and computed salary info in the same frame.
+- [ ] Prompt the user to select a month for salary computation in the detail frame.
+- [ ] After clicking **Compute**, display employee details and computed salary info in the same frame.
 - [x] Add a **New Employee** button that opens a form to enter new employee information.
 - [x] Append new employee data to the CSV file and refresh the JTable after submission.
 
@@ -51,7 +51,7 @@ Example User - **EID: 10001 PW: password123**
 
 ### 🔐 Login System
 - [x] Require correct username and password to access the application.
-- [x] Store authorized accounts in a separate CSV file.
+- [ ] Store authorized accounts in a separate CSV file.
 - [x] Deny access and display an error message for invalid login credentials.
 
 ### What I'm proud of honestly:
