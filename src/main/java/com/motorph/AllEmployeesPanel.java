@@ -1,5 +1,9 @@
 package com.motorph;
 
+/*
+* author @Gav pogi
+inupdate ko na yung UI based sa request, wag niyo na galawan ty
+*/
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
@@ -14,6 +18,7 @@ public class AllEmployeesPanel extends JPanel {
     private JEditorPane detailPane;
     private JTextField searchField;
 
+// moved the column from the JTable to the Full View 
     private final String[] fullColumns = {
         "Employee #", "Last Name", "First Name", "Birthday", "Address", "Phone Number",
         "SSS #", "Philhealth #", "TIN #", "Pag-ibig #", "Status", "Position",
@@ -23,7 +28,7 @@ public class AllEmployeesPanel extends JPanel {
 
     public AllEmployeesPanel() {
         setLayout(new BorderLayout());
-
+// Nakita ko lang to sa tutorial na paano gawin uneditable ang field para hindi nakakainis
         model = new DefaultTableModel(new Object[]{"Employee #", "Name", "Status"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -100,17 +105,18 @@ public class AllEmployeesPanel extends JPanel {
         buttonPanel.add(addBtn);
         buttonPanel.add(editBtn);
         buttonPanel.add(deleteBtn);
-
+		
+		// split-view (left = list) (right = full view)
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(table), new JScrollPane(detailPane));
-        splitPane.setResizeWeight(0.0); // keep table fixed
-        splitPane.setDividerLocation(440); // set initial divider width
-        splitPane.setDividerSize(6); // optional thinner divider
+        splitPane.setResizeWeight(0.0);
+        splitPane.setDividerLocation(440);
+        splitPane.setDividerSize(6);
 
         add(topPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
     }
-
+	 // paano natin icoconvert to csv?
     private void loadEmployeeData() {
         model.setRowCount(0);
         try (BufferedReader br = new BufferedReader(new FileReader("employee_data.txt"))) {
@@ -150,7 +156,8 @@ public class AllEmployeesPanel extends JPanel {
         }
         return new String[fullColumns.length];
     }
-
+	//Right panel when selecting employee
+	//lagay niyo lang tong kaomoji
     private void showEmployeeDetails(String[] data) {
         StringBuilder html = new StringBuilder("<html><body style='font-family:sans-serif; padding:10px;'>");
         html.append("<h2 style='margin-top:0;'>(◕‿◕) Employee Profile</h2><table cellpadding='4'>");
@@ -166,10 +173,98 @@ public class AllEmployeesPanel extends JPanel {
     }
 
     private void openEmployeeDialog(String[] data) {
-        // Fill this with your existing add/edit dialog logic
+        JTextField[] fields = new JTextField[fullColumns.length];
+        JPanel panel = new JPanel(new GridLayout(fullColumns.length, 2, 4, 4));
+
+        for (int i = 0; i < fullColumns.length; i++) {
+            panel.add(new JLabel(fullColumns[i]));
+            fields[i] = new JTextField(data != null && i < data.length ? data[i] : "");
+            panel.add(fields[i]);
+        }
+
+        int result = JOptionPane.showConfirmDialog(this, panel, data == null ? "Add Employee" : "Edit Employee", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String[] newData = new String[fullColumns.length];
+            for (int i = 0; i < fullColumns.length; i++) {
+                newData[i] = fields[i].getText();
+            }
+
+            saveOrUpdateEmployee(newData, data != null ? data[0] : null);
+        }
     }
 
+    private void saveOrUpdateEmployee(String[] newData, String oldEmpId) {
+        File file = new File("employee_data.txt");
+        Vector<String> updatedLines = new Vector<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            boolean updated = false;
+
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("\t");
+                if (parts[0].equals(oldEmpId)) {
+                    updatedLines.add(String.join("\t", newData));
+                    updated = true;
+                } else {
+                    updatedLines.add(line);
+                }
+            }
+
+            if (!updated) {
+                updatedLines.add(String.join("\t", newData));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            for (String updatedLine : updatedLines) {
+                bw.write(updatedLine);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        loadEmployeeData();
+    }
+ /// Hindi ko alam paano ayusin tong section na mag eerror kung kulang sa ng input sa field
     private void deleteSelectedRow() {
-        // Fill this with your existing delete logic
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+            return;
+        }
+
+        String empId = (String) table.getValueAt(selectedRow, 0);
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete Employee #" + empId + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        File file = new File("employee_data.txt");
+        Vector<String> updatedLines = new Vector<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("\t");
+                if (!parts[0].equals(empId)) {
+                    updatedLines.add(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            for (String updatedLine : updatedLines) {
+                bw.write(updatedLine);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        loadEmployeeData();
     }
 }
