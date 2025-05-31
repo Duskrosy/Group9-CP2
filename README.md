@@ -37,6 +37,7 @@ Example User - **EID: 10001 PW: password123**
   - PhilHealth Number
   - TIN
   - Pag-IBIG Number
+  - And every type of pay (Rice subsidy, clothing allowance, etc...)
 - [x] Allow user to select an employee from the table and click **View Employee** to open a detailed frame.
 - [x] Prompt the user to select a month for salary computation in the detail frame.
 - [ ] After clicking **Compute**, display employee details and computed salary info in the same frame.
